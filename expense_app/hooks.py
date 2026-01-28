@@ -84,6 +84,7 @@ app_license = "mit"
 
 # before_install = "expense_app.install.before_install"
 # after_install = "expense_app.install.after_install"
+after_install = "expense_app.expense_app.defaults.install_defaults"
 
 # Uninstallation
 # ------------
@@ -242,3 +243,12 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+fixtures = [
+    # Client Scripts
+    {
+        "doctype": "Client Script",
+        "filters": [
+            ["module", "=", "Expense App"]
+        ]
+    },
+]
