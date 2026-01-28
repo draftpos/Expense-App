@@ -1,0 +1,24 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Purchase Expenses",
+  "enabled": 1,
+  "modified": "2026-01-28 15:05:21.759549",
+  "module": "Expense App",
+  "name": "Purchase Expense Account Filter",
+  "script": "frappe.ui.form.on(\"Purchase Expenses\", {\n  setup(frm) {\n    frm.set_query(\"account\", function () {\n      return {\n        filters: {\n          account_type: [\"in\", [\"Bank\", \"Cash\"]],\n          is_group: 0,\n          company: frm.doc.company\n        }\n      };\n    });\n  }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Purchase Expenses",
+  "enabled": 1,
+  "modified": "2026-01-28 15:19:18.639710",
+  "module": "Expense App",
+  "name": "Item Table calculations",
+  "script": "frappe.ui.form.on('Purchase Expenses', {\n    // nothing needed here for now\n});\n\n// handle child table events\nfrappe.ui.form.on('Purchase Expenses Item', {\n    item_name: function(frm, cdt, cdn) {\n        let row = locals[cdt][cdn];\n        if(row.item_name) {\n            frappe.call({\n                method: \"frappe.client.get_value\",\n                args: {\n                    doctype: \"Item\",\n                    filters: { name: row.item_name },\n                    fieldname: [\"standard_rate\"]\n                },\n                callback: function(r) {\n                    if(r.message) {\n                        row.rate = r.message.standard_rate;\n                        row.total = row.rate * (row.qty || 0);\n                        frm.refresh_field(\"items\"); // child table fieldname in parent\n                    }\n                }\n            });\n        }\n    },\n\n    qty: function(frm, cdt, cdn) {\n        let row = locals[cdt][cdn];\n        row.total = row.rate * (row.qty || 0);\n        frm.refresh_field(\"items\");\n    },\n\n    rate: function(frm, cdt, cdn) {\n        let row = locals[cdt][cdn];\n        row.total = row.rate * (row.qty || 0);\n        frm.refresh_field(\"items\");\n    }\n});\n",
+  "view": "Form"
+ }
+]
